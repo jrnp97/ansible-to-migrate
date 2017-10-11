@@ -10,7 +10,7 @@ tomando en cuenta la explicado en el README principal previo exactamente en la s
 
 Cabe aclarar que los host se encuentran en el mismo segmento de red es lo que se puede deducir ya que no se especifica ninguna ip del Server de la base de datos.
 
-**Aunque tambien puede darse el acaso que el host *bensible* sea el mismo localhost pero con un alias.**
+**Aunque tambien puede darse el caso en que el host *bensible* sea el mismo localhost pero con un alias.**
 
 ## Caracteristicas del Server ##
 
