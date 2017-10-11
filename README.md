@@ -1,27 +1,94 @@
-Building a simple LAMP stack and deploying Application using Ansible Playbooks.
--------------------------------------------
+# Arquitectura #
 
-These playbooks require Ansible 1.2.
+La Arquitectura base del sistema con CentOS o RHEL del sistema es la siguiente
 
-These playbooks are meant to be a reference and starter's guide to building
-Ansible Playbooks. These playbooks were tested on CentOS 6.x so we recommend
-that you use CentOS or RHEL to test these modules.
+![alt-text](/img/structure.png)
 
-This LAMP stack can be on a single node or multiple nodes. The inventory file
-'hosts' defines the nodes in which the stacks should be configured.
+tomando en cuenta la explicado en el README principal previo exactamente en la siguiente linea
 
-        [webservers]
-        localhost
+![alt-text](/img/Prev_README.png)
 
-        [dbservers]
-        bensible
+Cabe aclarar que los host se encuentran en el mismo segmento de red es lo que se puede deducir ya que no se especifica ninguna ip del Server de la base de datos.
 
-Here the webserver would be configured on the local host and the dbserver on a
-server called "bensible". The stack can be deployed using the following
-command:
+## Caracteristicas del Server ##
 
-        ansible-playbook -i hosts site.yml
+En el servidor web se realiza la instalación del servicio httpd y ntp, los cuales funcionan como servidor web y administrador de fechas en equipos respectivamente para la instalación de estos en los hosts con ansible se utilizaron los siguientes modulos
 
-Once done, you can check the results by browsing to http://localhost/index.php.
-You should see a simple test page and a list of databases retrieved from the
-database server.
+- **yum:** permite el uso del manejador de repositorios de Centos, para mas documentacion [aquí](http://docs.ansible.com/ansible/latest/yum_module.html).
+- **lineinfile:** funciona como la funcion sed en bash, permite el reemplazo o adicion de contenido a archivos buscando este por una expeción regular si la encuentra realiza lo estipulado en el atributo **line**, cabe aclara que en el atributo **regexp** se especifica la expresion regular a buscar, para mas documentacion [aquí](http://docs.ansible.com/ansible/latest/lineinfile_module.html).
+- **service:** modulo que permite manejar los servicios en un host, para mas información [aquí](http://docs.ansible.com/ansible/latest/service_module.html).
+- **seboolean:** permite la configuración de variables en el modulo seguro SELinux cambiando su estado a true o false dependiendo de su uso, para más información [aquí](http://docs.ansible.com/ansible/latest/seboolean_module.html).
+- **git:** Modulo que permite el uso de git en el host que lo ejecuta.
+- **template:** Modulo que permite copiar archivos de configuración o normales personalizados en el host.
+
+### Uso de modulos ###
+
+Explicare un poco para que se utilizan los modulos en los playbooks y su posible equivalencia en ubuntu (si se aplica esta).
+
+**yum**
+
+El modulo **yum** se ha utilizado para instalar los siguientes paquetes en el host
+
+- httpd
+- php
+- php-mysql
+- git
+- libsemanage-python
+- libselinux-python
+
+Los cuales permiten el uso del servicio **httpd** y dependencias de 3ros, git para el control de versiones, **php y php-mysql** para hacer posible la conexion al motor de base de datos MySQL al cual se conectará y los paquetes **libsemanage-python y libselinux-python** para poder hacer uso del modulo **seboolean**.
+
+Del modulo yum en ubuntu su equivalencia seria el gestionador de paquetes de ese sistema **apt**, manteniendo los mismos atributos.
+
+**lineinfile**
+
+El modulo **lineinfile** lo que realiza es la agregación de reglas iptables para permitir las conexiones externas, es decir, permitir que el servicio **httpd** reciba peticiones del exterior.
+
+A diferencia que en CentOS, si miramos desde la perpestiva de docker los contenedores basados en ubuntu no tienen iptables, pero los VPS o hosting alquilados si cuentan con ello, por ende al **realizar prueba de los playbooks en contenedores** no seria necesario utilizar dicha instruccion ya que docker cuenta con sus propios metodos para permitir conexiones desde el exterior.
+
+Pero en el caso que se desee inplementar la solucion en un VPS o cualquier otro dispositivo se podria hacer uso del modulo **iptables**, para no editar directamente el archivo.
+
+**service**
+
+El modulo **service** se utiliza para iniciar el servicio httpd y habilitarlo (insertarlo en la lista de programas que se ejecutan al iniciar el host).
+
+En el sistema ubuntu se puede realizar el mismo modulo sin modificación.
+
+**seboolean**
+
+El modulo **seboolean** permite la maniipulación se SELinux el cual se encuentra deshabilitado en ubuntu, el cual podría mantenerse del mismo, es decir dicho paso en ubuntu podría muy bien no realizarse.
+
+**git**
+
+El modulo **git** se utiliza primordialmente para realizar la clonación de una aplicación en el directorio web del servicio httpd **/var/www/html/**.
+
+**template**
+
+El modulo **template** copia el archvio index.php personalizado el directorio web del servicio httpd.
+
+Antes de terminar con las Caracteristicas del servidor cabe aclarar que el servicio httpd es el equivalente al servicio apache2 en ubuntu pero sus configuraciónes permanecen parecidad, por ende se instalaria apache2 en vez de httpd.
+
+
+## Caracteristicas del DB ##
+
+Para la configuración del host con el motor de base de datos se instala con Ansible el motor MySQL y se realiza el uso de modulos ya explicados en las Caracteristicas del Server que son como:
+
+- **yum**
+- **lineinfile**
+- **service**
+- **seboolean**
+
+Los anteriores modulos ya fueron explicados y sus equivalencias en ubuntu si son posibles, los nuevos modulos observados son
+
+- **mysql_db:** este modulo permite gestionar las bases de datos en el motor MySQL, para mas información [aquí](http://docs.ansible.com/ansible/latest/mysql_db_module.html)
+- **mysql_user:** este modulo permite gestionar los usuarios de una base de datos MySQL, para mas informacion [aquí](http://docs.ansible.com/ansible/latest/mysql_user_module.html).
+
+La equivalencia de estos ultimos 2 modulos no es de discución ya que estos interactuan directamente con el servicio MySQL no con el OS en el host.
+
+Por lo tanto su uso será igual.
+
+## Rol common ##
+
+En este rol se busca instalar el servicio ntp, que permite sincronizar el tiempo y fecha de distintos dispositivo es decir proporcionarles el mismo UTC.
+
+Los modulos usados en este rol ya se han explicado y sus equivalencias.
