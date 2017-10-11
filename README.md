@@ -127,6 +127,18 @@ Lo cual debe generar algo parecido a la siguiente salida
 
 ![alt-text](/img/Migrate_status.png)
 
-y al ingresar en la url http://localhost/git/ se podrá apreciar el contenido de la app.
+y al ingresar en la url http://localhost/ se podrá apreciar el contenido de la app.
 
 ![alt-text](/img/Home_apache.png)
+
+Ademas de las siguientes 2 rutas
+
+- **http://localhost/index.php**
+
+ ![alt-text](/img/Home_apache2.png)
+
+- **http://localhost/about.html**
+
+ ![alt-text](/img/About_apache.png)
+
+Y listo nuestra migración esta finalizada con tecnologia docker, cabe aclarar que para realizar la migración y los hosts son "reales" podría incluirse la configuración de iptables o manejar directamente un firewall (puede ser firewalld el cual cuenta con modulo en ansible).

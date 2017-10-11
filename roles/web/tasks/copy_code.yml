@@ -2,8 +2,28 @@
 # These tasks are responsible for copying the latest dev/production code from
 # the version control system.
 
-- name: Copy the code from repository
-  git: repo={{ repository }} dest=/var/www/html/git 
+- name: Copy the code from repository to directory git on apache web directory
+  git:
+    repo: "{{ repository }}"
+    dest: /var/www/html/git/
+    clone: yes
+    force: yes
+
+- name: Change permissions to git directory
+  file:
+    path: /var/www/html/git/
+    mode: 0755
+
+- name: Overwrite default index.html
+  command: mv /var/www/html/git/index.html /var/www/html/index.html
+
+- name: Add about.html file on git to web directory root
+  command: mv /var/www/html/git/about.html /var/www/html/about.html
+
+- name: Delete git directory
+  command: rm -R /var/www/html/git/
 
 - name: Creates the index.php file
   template: src=index.php.j2 dest=/var/www/html/index.php
+  notify:
+    - restart apache
