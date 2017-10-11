@@ -126,3 +126,7 @@ Asumiendo que se encuentre en el directorio ansible-to-migrate
 Lo cual debe generar algo parecido a la siguiente salida
 
 ![alt-text](/img/Migrate_status.png)
+
+y al ingresar en la url http://localhost/git/ se podrá apreciar el contenido de la app.
+
+![alt-text](/img/Home_apache.png)
