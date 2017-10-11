@@ -92,3 +92,37 @@ Por lo tanto su uso será igual.
 En este rol se busca instalar el servicio ntp, que permite sincronizar el tiempo y fecha de distintos dispositivo es decir proporcionarles el mismo UTC.
 
 Los modulos usados en este rol ya se han explicado y sus equivalencias.
+
+## Migración de scripts ##
+
+Para la migración de script a ubuntu se ha preparado la siguiente Arquitectura
+
+![alt-text](/img/structure0.png)
+
+Ya que se ha de realizar con docker, las tareas relacionadas con **iptables** se les hará caso omiso por lo explicado en su momento anterior a esta sección al igual que las tareas que utilizan SELinux por el anuncio dado en la web oficial de inpreciso, puede observarlo [aquí](https://wiki.ubuntu.com/SELinux).
+
+Dadas las razones anteriores se procederá a migrar los scripts.
+
+Como los playbooks funcionan con ansible 1.2 y ya ansible cuenta con la versión 2.4, acciones donde se utilizaba **include** para importar tareas se ha despreciado y se utilizan **import_tasks** para importar tareas estaticas o **include_tasks** para importar tareas dinamicas.
+
+Una pequeña definicion de tareas dinamicas e estaticas son las siguientes
+
+- En las importaciones estaticas las opciones de la tarea padre serán copiadas a todas las tareas hijas contenidas en el modulo de referenciación.
+
+- En las importaciones dinamicas, las opciones de la tarea padre no son heredadas a las tareas hijas.
+
+Para mas información en la documentación [aquí](http://docs.ansible.com/ansible/latest/playbooks_reuse.html).
+
+En nuestro caso utilizaremos importaciones staticas para que las tareas hijas hereden las opciones del padre.
+
+Al ejecutar el playbook general con el siguiente comando
+
+```
+ansible-playbook -i hosts site.yml
+
+Asumiendo que se encuentre en el directorio ansible-to-migrate
+```
+
+Lo cual debe generar algo parecido a la siguiente salida
+
+![alt-text](/img/Migrate_status.png)

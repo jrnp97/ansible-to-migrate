@@ -4,6 +4,7 @@
 
 mysqlservice: mysqld
 mysql_port: 3306
+mysql_root_password: Root2017-
 dbuser: foouser
 dbname: foodb
 upassword: abc

@@ -1,24 +1,14 @@
 ---
 # These tasks install http and the php modules.
 
-- name: Install http and php etc
-  yum: name={{ item }} state=present
+- name: Install apache2 and php etc
+  apt: name={{ item }} state=present
   with_items:
-   - httpd
-   - php
-   - php-mysql
+   - apache2
+   - php7.0
+   - php7.0-mysql
+   - libapache2-mod-php7.0
    - git
-   - libsemanage-python
-   - libselinux-python
 
-- name: insert iptables rule for httpd
-  lineinfile: dest=/etc/sysconfig/iptables create=yes state=present regexp="{{ httpd_port }}" insertafter="^:OUTPUT "
-              line="-A INPUT -p tcp  --dport {{ httpd_port }} -j  ACCEPT"
-  notify: restart iptables
-
-- name: http service state
-  service: name=httpd state=started enabled=yes
-
-- name: Configure SELinux to allow httpd to connect to remote database
-  seboolean: name=httpd_can_network_connect_db state=true persistent=yes
-  when: sestatus.rc != 0
+- name: apache2 service state
+  service: name=apache2 state=started enabled=yes
