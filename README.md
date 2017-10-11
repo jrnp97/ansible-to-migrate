@@ -10,6 +10,8 @@ tomando en cuenta la explicado en el README principal previo exactamente en la s
 
 Cabe aclarar que los host se encuentran en el mismo segmento de red es lo que se puede deducir ya que no se especifica ninguna ip del Server de la base de datos.
 
+**Aunque tambien puede darse el acaso que el host *bensible* sea el mismo localhost pero con un alias.**
+
 ## Caracteristicas del Server ##
 
 En el servidor web se realiza la instalación del servicio httpd y ntp, los cuales funcionan como servidor web y administrador de fechas en equipos respectivamente para la instalación de estos en los hosts con ansible se utilizaron los siguientes modulos
